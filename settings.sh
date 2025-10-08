@@ -60,20 +60,18 @@ PACKAGES=(
 # If you want to install AUR packages, specify them in this variable
 AUR_PACKAGES=()
 
-# ALHP is a repository containing packages from the official Arch Linux
-# repos recompiled with -O3, LTO and optimizations for modern CPUs for
-# better performance
+# CachyOS repositories provide performance-optimized packages.
+# You can specify the CPU microarchitecture level to use the corresponding
+# optimized repositories.
 #
-# When this repository is enabled, most of the packages from the official
-# Arch Linux repos will be replaced with their optimized versions from ALHP
+# Supported levels:
+# 3: For CPUs with AVX2 support (Haswell, Zen 2, etc.)
+# 4: For CPUs with AVX512 support (Skylake-X, Rocket Lake, Zen 4, etc.)
 #
-# Set this variable to any value if you want to enable this repository
-ENABLE_ALHP_REPO=1
-
-# Feature levels for ALHP. Available feature levels are 2 and 3
-# For level 2 you need a CPU with SSE4.2 instructions
-# For level 3 you need a CPU with AVX2 instructions
-ALHP_FEATURE_LEVEL=3
+# The script will use the repositories corresponding to the level set here.
+# For example, if set to 3, it will use [cachyos-v3], [cachyos-core-v3], etc.
+# Leave empty or set to a value lower than 3 to use the generic repositories.
+CACHYOS_CPU_LEVEL=3
 
 # Locales to configure in the image
 LOCALES=(
@@ -84,16 +82,10 @@ LOCALES=(
 # Content of pacman mirrorrlist file before reflector is installed and used to fetch new one
 # shellcheck disable=2016
 MIRRORLIST='
-Server = https://mirror1.sl-chat.ru/archlinux/$repo/os/$arch
-Server = https://mirror3.sl-chat.ru/archlinux/$repo/os/$arch
-Server = https://us.mirrors.cicku.me/archlinux/$repo/os/$arch
-Server = https://mirror.osbeck.com/archlinux/$repo/os/$arch
-Server = https://md.mirrors.hacktegic.com/archlinux/$repo/os/$arch
-Server = https://geo.mirror.pkgbuild.com/$repo/os/$arch
-Server = https://mirror.qctronics.com/archlinux/$repo/os/$arch
-Server = https://arch.mirror.constant.com/$repo/os/$arch
-Server = https://america.mirror.pkgbuild.com/$repo/os/$arch
-Server = https://mirror.tmmworkshop.com/archlinux/$repo/os/$arch
+Server = https://mirror.cyberbits.eu/archlinux/$repo/os/$arch
+Server = https://de.arch.mirror.kescher.at/archlinux/$repo/os/$arch
+Server = https://mirror.lcarilla.de/archlinux/$repo/os/$arch
+Server = https://mirrors.kernel.org/archlinux/$repo/os/$arch
 '
 
 # Enable this variable to use the system-wide mksquashfs/mkdwarfs instead
@@ -123,12 +115,10 @@ DWARFS_COMPRESSOR_ARGUMENTS=(
 # List of links to arch bootstrap archive
 # Conty will try to download each one of them sequentially
 BOOTSTRAP_DOWNLOAD_URLS=(
-	'https://arch.hu.fo/archlinux/iso/latest/archlinux-bootstrap-x86_64.tar.zst'
 	'https://mirror.cyberbits.eu/archlinux/iso/latest/archlinux-bootstrap-x86_64.tar.zst'
-	'https://mirror.osbeck.com/archlinux/iso/latest/archlinux-bootstrap-x86_64.tar.zst'
 	'https://mirror.lcarilla.de/archlinux/iso/latest/archlinux-bootstrap-x86_64.tar.zst'
-	'https://mirror.moson.org/archlinux/iso/latest/archlinux-bootstrap-x86_64.tar.zst'
-	'https://mirror.f4st.host/archlinux/iso/latest/archlinux-bootstrap-x86_64.tar.zst'
+	'https://arch.jensgutermuth.de/iso/latest/archlinux-bootstrap-x86_64.tar.zst'
+	'https://mirrors.kernel.org/archlinux/iso/latest/archlinux-bootstrap-x86_64.tar.zst'
 )
 
 # sha256sums.txt file to verify downloaded bootstrap archive with
@@ -136,4 +126,5 @@ BOOTSTRAP_SHA256SUM_FILE_URL='https://archlinux.org/iso/latest/sha256sums.txt'
 
 # Set to any value to use an existing image if it exists
 # Otherwise the script will always create a new image
-USE_EXISTING_IMAGE=
+USE_EXISTING_IMAGE=1
+

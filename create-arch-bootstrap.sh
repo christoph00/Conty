@@ -112,22 +112,34 @@ generate_mirrorlist () {
 
 cd "${script_dir}" || exit 1
 
+bootstrap_filename="archlinux-bootstrap-x86_64.tar.zst"
+sha256sums_filename="sha256sums.txt"
 
-curl -#LO "$BOOTSTRAP_SHA256SUM_FILE_URL" || (echo "Failed to download sha256sums.txt file"; exit 1)
+curl -#fLO "$BOOTSTRAP_SHA256SUM_FILE_URL" || { echo "Failed to download $sha256sums_filename file"; exit 1; }
+
 for link in "${BOOTSTRAP_DOWNLOAD_URLS[@]}"; do
-	echo "Downloading Arch Linux bootstrap from $link"
-	curl -#LO "$link"
+	# Clean up any previous failed download
+	rm -f "$bootstrap_filename"
 
-	echo "Verifying the integrity of the bootstrap"
-	if sha256sum --ignore-missing -c sha256sums.txt &>/dev/null; then
-		bootstrap_is_good=1
-		break
+	echo "Downloading Arch Linux bootstrap from $link"
+	if curl -#fL -o "$bootstrap_filename" "$link"; then
+		echo "Verifying the integrity of the bootstrap"
+		# Check the downloaded file against the correct checksum from the file
+		if grep "$bootstrap_filename" "$sha256sums_filename" | sha256sum --check --status; then
+			echo "Bootstrap verification successful."
+			bootstrap_is_good=1
+			break
+		else
+			echo "Checksum verification failed for download from $link."
+		fi
+	else
+		echo "Download from $link failed."
 	fi
-	echo "Download failed, trying again with different mirror"
+	echo "Trying next mirror..."
 done
 
 if [ -z "${bootstrap_is_good}" ]; then
-	echo "Bootstrap download failed or its checksum is incorrect"
+	echo "Bootstrap download failed or its checksum is incorrect after trying all mirrors."
 	exit 1
 fi
 
@@ -135,8 +147,8 @@ fi
 unmount_chroot
 
 rm -rf "${bootstrap}"
-tar xf archlinux-bootstrap-x86_64.tar.zst
-rm archlinux-bootstrap-x86_64.tar.zst sha256sums.txt
+tar xf "$bootstrap_filename"
+rm "$bootstrap_filename" "$sha256sums_filename"
 
 mount_chroot
 
@@ -165,37 +177,44 @@ mv mirrorlist "${bootstrap}"/etc/pacman.d/mirrorlist
 run_in_chroot pacman-key --init
 run_in_chroot pacman-key --populate archlinux
 
-# Add Chaotic-AUR repo
-run_in_chroot pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
-run_in_chroot pacman-key --lsign-key 3056513887B78AEB
+# Add CachyOS repo
+run_in_chroot pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
+run_in_chroot pacman-key --lsign-key F3B607488DB35A47
 
-if ! run_in_chroot pacman --noconfirm -U \
-	 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' \
-	 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'; then
-	echo "Seems like Chaotic-AUR keyring or mirrorlist is currently unavailable"
-	echo "Please try again later"
-	exit 1
+if ! run_in_chroot pacman --noconfirm -U 'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-20240331-1-any.pkg.tar.zst' \
+'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-22-1-any.pkg.tar.zst' \
+'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-22-1-any.pkg.tar.zst' \
+'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v4-mirrorlist-22-1-any.pkg.tar.zst'; then
+    echo "Seems like CachyOS keyring or mirrorlist is currently unavailable"
+    echo "Please try again later"
+    exit 1
 fi
 
 {
-	echo
-	echo "[chaotic-aur]"
-	echo "Include = /etc/pacman.d/chaotic-mirrorlist"
+    echo
+    echo "[cachyos]"
+    echo "Include = /etc/pacman.d/cachyos-mirrorlist"
 } >> "${bootstrap}"/etc/pacman.conf
+
+# Add CachyOS performance-optimized repos if a CPU level is set
+if [ -n "$CACHYOS_CPU_LEVEL" ] && [ "$CACHYOS_CPU_LEVEL" -ge 3 ]; then
+    {
+        echo
+        echo "[cachyos-v${CACHYOS_CPU_LEVEL}]"
+        echo "Include = /etc/pacman.d/cachyos-v${CACHYOS_CPU_LEVEL}-mirrorlist"
+        echo "[cachyos-core-v${CACHYOS_CPU_LEVEL}]"
+        echo "Include = /etc/pacman.d/cachyos-v${CACHYOS_CPU_LEVEL}-mirrorlist"
+        echo "[cachyos-extra-v${CACHYOS_CPU_LEVEL}]"
+        echo "Include = /etc/pacman.d/cachyos-v${CACHYOS_CPU_LEVEL}-mirrorlist"
+    } >> "${bootstrap}"/etc/pacman.conf
+fi
+
 
 # Do not install unneeded files (man pages and Nvidia firmwares)
 sed -i 's/#NoExtract   =/NoExtract   = usr\/lib\/firmware\/nvidia\/\* usr\/share\/man\/\*/' "${bootstrap}"/etc/pacman.conf
 
 run_in_chroot pacman -Sy archlinux-keyring --noconfirm
 run_in_chroot pacman -Su --noconfirm
-
-if [ -n "$ENABLE_ALHP_REPO" ]; then
-	run_in_chroot pacman --noconfirm --needed -S alhp-keyring alhp-mirrorlist
-	sed -i "s/#\[multilib\]/#/" "${bootstrap}"/etc/pacman.conf
-	sed -i "s/\[core\]/\[core-x86-64-v${ALHP_FEATURE_LEVEL}\]\nInclude = \/etc\/pacman.d\/alhp-mirrorlist\n\n\[extra-x86-64-v${ALHP_FEATURE_LEVEL}\]\nInclude = \/etc\/pacman.d\/alhp-mirrorlist\n\n\[core\]/" "${bootstrap}"/etc/pacman.conf
-	sed -i "s/\[multilib\]/\[multilib-x86-64-v${ALHP_FEATURE_LEVEL}\]\nInclude = \/etc\/pacman.d\/alhp-mirrorlist\n\n\[multilib\]/" "${bootstrap}"/etc/pacman.conf
-	run_in_chroot pacman -Syu --noconfirm
-fi
 
 date -u +"%d-%m-%Y %H:%M (DMY UTC)" > "${bootstrap}"/version
 
@@ -271,3 +290,4 @@ if [ -f "${bootstrap}"/opt/bad_aur_pkglist.txt ]; then
 	cat "${bootstrap}"/opt/bad_aur_pkglist.txt
 	rm "${bootstrap}"/opt/bad_aur_pkglist.txt
 fi
+
