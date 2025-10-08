@@ -28,13 +28,9 @@ fi
 
 cd "${script_dir}" || exit 1
 
-if [ -n "$USE_DWARFS" ]; then
-	utils="utils_dwarfs.tar.gz"
-	compressor_command=(mkdwarfs -i "${bootstrap}" -o "${image_path}" "${DWARFS_COMPRESSOR_ARGUMENTS[@]}")
-else
-	utils="utils.tar.gz"
-	compressor_command=(mksquashfs "${bootstrap}" "${image_path}" "${SQUASHFS_COMPRESSOR_ARGUMENTS[@]}")
-fi
+utils="utils_dwarfs.tar.gz"
+compressor_command=(mkdwarfs -i "${bootstrap}" -o "${image_path}" "${DWARFS_COMPRESSOR_ARGUMENTS[@]}")
+
 
 if [ ! -f "${utils}" ] || [ "$(wc -c < "${utils}")" -lt 100000 ]; then
  	if git config --get remote.origin.url; then
