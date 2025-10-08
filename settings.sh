@@ -40,14 +40,21 @@ PACKAGES=(
 	cabextract wget gamemode lib32-gamemode mangohud lib32-mangohud
 	# gaming
 	python-protobuf steam steam-native-runtime steamtinkerlaunch
-	gamehub legendary prismlauncher bottles faugus-launcher
+	gamehub legendary prismlauncher bottles faugus-launcher protonplus
 	# extra
-	nano ttf-dejavu ttf-liberation mpv pcmanfm
-	htop gpicview
+	ttf-dejavu ttf-liberation ttf-opensans  mpv nemo
+	gpicview
 	yt-dlp minizip gnome-themes-extra
  	ffmpegthumbnailer tmux
 	# browser
 	firefox
+	# graphics
+	gimp inkscape
+	# dev
+	code-features
+	code-marketplace
+	code
+
 )
 
 # If you want to install AUR packages, specify them in this variable
