@@ -190,35 +190,53 @@ if ! run_in_chroot pacman --noconfirm -U 'https://mirror.cachyos.org/repo/x86_64
     exit 1
 fi
 
+cp "${bootstrap}/etc/pacman.conf" "${bootstrap}/etc/pacman.conf.bak"
 
-cp "${bootstrap}"/etc/pacman.conf "${bootstrap}"/etc/pacman.conf.bak
+cat > "${bootstrap}/etc/pacman.conf" <<EOF
+#
+# Pacman global config
+#
+Architecture = x86_64 x86_64_v${CACHYOS_CPU_LEVEL}
 
-awk '/^\[extra\]/ || /^\[community\]/ {exit} {print}' "${bootstrap}"/etc/pacman.conf.bak > "${bootstrap}"/etc/pacman.conf
+# Include Repo-Dateien (Reihenfolge definiert Priorität)
+Include = /etc/pacman.d/cachyos.conf
+Include = /etc/pacman.d/cachyos-v${CACHYOS_CPU_LEVEL}.conf
+Include = /etc/pacman.d/multilib.conf
+Include = /etc/pacman.d/core.conf
+Include = /etc/pacman.d/extra.conf
+Include = /etc/pacman.d/community.conf
+EOF
 
-{
-    echo
-    echo "[cachyos]"
-    echo "Include = /etc/pacman.d/cachyos-mirrorlist"
-    if [ -n "$CACHYOS_CPU_LEVEL" ] && [ "$CACHYOS_CPU_LEVEL" -ge 3 ]; then
-        echo
-        echo "[cachyos-v${CACHYOS_CPU_LEVEL}]"
-        echo "Include = /etc/pacman.d/cachyos-v${CACHYOS_CPU_LEVEL}-mirrorlist"
-        echo "[cachyos-core-v${CACHYOS_CPU_LEVEL}]"
-        echo "Include = /etc/pacman.d/cachyos-v${CACHYOS_CPU_LEVEL}-mirrorlist"
-        echo "[cachyos-extra-v${CACHYOS_CPU_LEVEL}]"
-        echo "Include = /etc/pacman.d/cachyos-v${CACHYOS_CPU_LEVEL}-mirrorlist"
-    fi
-    echo
-} >> "${bootstrap}"/etc/pacman.conf
+cat > "${bootstrap}/etc/pacman.d/cachyos.conf" <<EOF
+[cachyos]
+Include = /etc/pacman.d/cachyos-mirrorlist
+EOF
 
-awk '/^\[extra\]/,EOF' "${bootstrap}"/etc/pacman.conf.bak >> "${bootstrap}"/etc/pacman.conf
+if [ -n "$CACHYOS_CPU_LEVEL" ] && [ "$CACHYOS_CPU_LEVEL" -ge 3 ]; then
+  cat > "${bootstrap}/etc/pacman.d/cachyos-v${CACHYOS_CPU_LEVEL}.conf" <<EOF
+[cachyos-v${CACHYOS_CPU_LEVEL}]
+Include = /etc/pacman.d/cachyos-v${CACHYOS_CPU_LEVEL}-mirrorlist
 
+[cachyos-core-v${CACHYOS_CPU_LEVEL}]
+Include = /etc/pacman.d/cachyos-v${CACHYOS_CPU_LEVEL}-mirrorlist
 
-# Do not install unneeded files (man pages and Nvidia firmwares)
-sed -i 's/#NoExtract   =/NoExtract   = usr\/lib\/firmware\/nvidia\/\* usr\/share\/man\/\*/' "${bootstrap}"/etc/pacman.conf
+[cachyos-extra-v${CACHYOS_CPU_LEVEL}]
+Include = /etc/pacman.d/cachyos-v${CACHYOS_CPU_LEVEL}-mirrorlist
+EOF
+else
+  : > "${bootstrap}/etc/pacman.d/cachyos-v${CACHYOS_CPU_LEVEL}.conf"
+fi
 
-sed -i '/^Architecture/ d' "${bootstrap}/etc/pacman.conf"
-echo "Architecture = x86_64 x86_64_v3" >> "${bootstrap}/etc/pacman.conf"
+awk '/^\[multilib\]/{print;getline; print;exit}' "${bootstrap}/etc/pacman.conf.bak" > "${bootstrap}/etc/pacman.d/multilib.conf"
+awk '/^\[core\]/{print;getline; print;exit}' "${bootstrap}/etc/pacman.conf.bak" > "${bootstrap}/etc/pacman.d/core.conf"
+awk '/^\[extra\]/{print;getline; print;exit}' "${bootstrap}/etc/pacman.conf.bak" > "${bootstrap}/etc/pacman.d/extra.conf"
+awk '/^\[community\]/{print;getline; print;exit}' "${bootstrap}/etc/pacman.conf.bak" > "${bootstrap}/etc/pacman.d/community.conf"
+
+sed -i '/^\[.*\]/,$d' "${bootstrap}/etc/pacman.conf.bak"
+
+grep -v '^\[.*\]' "${bootstrap}/etc/pacman.conf.bak" >> "${bootstrap}/etc/pacman.conf"
+
+sed -i 's/#NoExtract   =/NoExtract   = usr\/lib\/firmware\/nvidia\/\* usr\/share\/man\/\*/' "${bootstrap}/etc/pacman.conf"
 
 run_in_chroot pacman -Sy archlinux-keyring --noconfirm
 run_in_chroot pacman -Su --noconfirm
