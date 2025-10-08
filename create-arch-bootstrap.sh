@@ -190,15 +190,16 @@ if ! run_in_chroot pacman --noconfirm -U 'https://mirror.cachyos.org/repo/x86_64
     exit 1
 fi
 
+
+cp "${bootstrap}"/etc/pacman.conf "${bootstrap}"/etc/pacman.conf.bak
+
+awk '/^\[extra\]/ || /^\[community\]/ {exit} {print}' "${bootstrap}"/etc/pacman.conf.bak > "${bootstrap}"/etc/pacman.conf
+
 {
     echo
     echo "[cachyos]"
     echo "Include = /etc/pacman.d/cachyos-mirrorlist"
-} >> "${bootstrap}"/etc/pacman.conf
-
-# Add CachyOS performance-optimized repos if a CPU level is set
-if [ -n "$CACHYOS_CPU_LEVEL" ] && [ "$CACHYOS_CPU_LEVEL" -ge 3 ]; then
-    {
+    if [ -n "$CACHYOS_CPU_LEVEL" ] && [ "$CACHYOS_CPU_LEVEL" -ge 3 ]; then
         echo
         echo "[cachyos-v${CACHYOS_CPU_LEVEL}]"
         echo "Include = /etc/pacman.d/cachyos-v${CACHYOS_CPU_LEVEL}-mirrorlist"
@@ -206,8 +207,11 @@ if [ -n "$CACHYOS_CPU_LEVEL" ] && [ "$CACHYOS_CPU_LEVEL" -ge 3 ]; then
         echo "Include = /etc/pacman.d/cachyos-v${CACHYOS_CPU_LEVEL}-mirrorlist"
         echo "[cachyos-extra-v${CACHYOS_CPU_LEVEL}]"
         echo "Include = /etc/pacman.d/cachyos-v${CACHYOS_CPU_LEVEL}-mirrorlist"
-    } >> "${bootstrap}"/etc/pacman.conf
-fi
+    fi
+    echo
+} >> "${bootstrap}"/etc/pacman.conf
+
+awk '/^\[extra\]/,EOF' "${bootstrap}"/etc/pacman.conf.bak >> "${bootstrap}"/etc/pacman.conf
 
 
 # Do not install unneeded files (man pages and Nvidia firmwares)
