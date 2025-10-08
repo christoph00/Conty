@@ -154,13 +154,7 @@ mount_chroot
 
 generate_localegen
 
-if command -v reflector 1>/dev/null; then
-	echo "Generating mirrorlist..."
-	reflector --connection-timeout 10 --download-timeout 10 --protocol https --score 10 --sort rate --save mirrorlist
-	reflector_used=1
-else
-	generate_mirrorlist
-fi
+generate_mirrorlist
 
 rm "${bootstrap}"/etc/locale.gen
 mv locale.gen "${bootstrap}"/etc/locale.gen
@@ -196,13 +190,12 @@ cat > "${bootstrap}/etc/pacman.conf" <<EOF
 [options]
 Architecture = x86_64 x86_64_v${CACHYOS_CPU_LEVEL}
 
-# Include Repo-Dateien (Reihenfolge definiert Priorität)
-Include = /etc/pacman.d/cachyos.conf
 Include = /etc/pacman.d/cachyos-v${CACHYOS_CPU_LEVEL}.conf
-Include = /etc/pacman.d/multilib.conf
+Include = /etc/pacman.d/cachyos.conf
 Include = /etc/pacman.d/core.conf
 Include = /etc/pacman.d/extra.conf
 Include = /etc/pacman.d/community.conf
+Include = /etc/pacman.d/multilib.conf
 EOF
 
 cat > "${bootstrap}/etc/pacman.d/cachyos.conf" <<EOF
