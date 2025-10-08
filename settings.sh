@@ -40,7 +40,7 @@ PACKAGES=(
 	cabextract wget gamemode lib32-gamemode mangohud lib32-mangohud
 	# gaming
 	python-protobuf steam steam-native-runtime 
-	faugus-launcher protonplus umu-launcher openmw openttd
+	faugus-launcher protonplus umu-launcher openmw openttd proton-cachyos-slr
 	# extra
 	ttf-dejavu ttf-liberation ttf-opensans  mpv nemo
 	gpicview
