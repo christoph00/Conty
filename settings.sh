@@ -17,7 +17,7 @@ PACKAGES=(
 	lib32-vulkan-mesa-layers libva-intel-driver lib32-libva-intel-driver
 	intel-media-driver mesa-utils vulkan-tools libva-utils lib32-mesa-utils
 	# wine
-	wine-staging winetricks-git wine-nine wineasio
+	wine-staging winetricks wine-ninex 
 	freetype2 lib32-freetype2 libxft lib32-libxft
 	flex lib32-flex fluidsynth lib32-fluidsynth
 	libxrandr lib32-libxrandr xorg-xrandr libldap lib32-libldap
@@ -39,8 +39,8 @@ PACKAGES=(
 	openssl-1.1 lib32-openssl-1.1 libnm lib32-libnm
 	cabextract wget gamemode lib32-gamemode mangohud lib32-mangohud
 	# gaming
-	python-protobuf steam steam-native-runtime steamtinkerlaunch
-	gamehub legendary prismlauncher bottles faugus-launcher protonplus
+	python-protobuf steam steam-native-runtime 
+	faugus-launcher protonplus
 	# extra
 	ttf-dejavu ttf-liberation ttf-opensans  mpv nemo
 	gpicview
@@ -51,8 +51,6 @@ PACKAGES=(
 	# graphics
 	gimp inkscape
 	# dev
-	code-features
-	code-marketplace
 	code
 
 )
