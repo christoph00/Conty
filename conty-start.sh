@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 ## Dependencies: bash gzip fuse2 (or fuse3) tar coreutils
 
-LD_PRELOAD_ORIG="${LD_PRELOAD}"
+LD_PRELOAD_ORIG=""
 LD_LIBRARY_PATH_ORIG="${LD_LIBRARY_PATH}"
 unset LD_PRELOAD LD_LIBRARY_PATH
 

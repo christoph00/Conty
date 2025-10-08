@@ -47,7 +47,7 @@ PACKAGES=(
 	yt-dlp minizip gnome-themes-extra
  	ffmpegthumbnailer tmux
 	# browser
-	zen-browser-bin firefox librewolf
+	firefox
 )
 
 # If you want to install AUR packages, specify them in this variable
@@ -105,7 +105,7 @@ SQUASHFS_COMPRESSOR_ARGUMENTS=(-b 1M -comp "${SQUASHFS_COMPRESSOR}" -Xcompressio
 #SQUASHFS_COMPRESSOR_ARGUMENTS=(-b 256K -comp "${SQUASHFS_COMPRESSOR}" -Xhc)
 
 # Set to any value to Use DwarFS instead of SquashFS
-USE_DWARFS=
+USE_DWARFS=1
 DWARFS_COMPRESSOR_ARGUMENTS=(
 	-l7 -C zstd:level=19 --metadata-compression null
 	-S 22 -B 1 --order nilsimsa
