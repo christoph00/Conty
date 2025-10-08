@@ -38,25 +38,20 @@ PACKAGES=(
 	sdl2-compat lib32-sdl2-compat vkd3d lib32-vkd3d libgphoto2
 	openssl-1.1 lib32-openssl-1.1 libnm lib32-libnm
 	cabextract wget gamemode lib32-gamemode mangohud lib32-mangohud
-	# development
-	base-devel git meson mingw-w64-gcc cmake
 	# gaming
-	lutris python-protobuf steam steam-native-runtime steamtinkerlaunch
-	minigalaxy gamehub legendary prismlauncher bottles playonlinux obs-studio
-	retroarch retroarch-assets-ozone libretro-beetle-psx-hw
-	libretro-blastem libretro-bsnes libretro-dolphin duckstation-gpl
-	libretro-gambatte libretro-melonds libretro-mgba libretro-nestopia
-	libretro-parallel-n64 libretro-picodrive libretro-ppsspp
-	libretro-yabause pcsx2-git
+	python-protobuf steam steam-native-runtime steamtinkerlaunch
+	gamehub legendary prismlauncher bottles faugus-launcher
 	# extra
-	nano ttf-dejavu ttf-liberation firefox mpv geany pcmanfm
-	htop qbittorrent speedcrunch gpicview file-roller openbox lxterminal
-	yt-dlp minizip nautilus genymotion jre17-openjdk gnome-themes-extra
+	nano ttf-dejavu ttf-liberation mpv pcmanfm
+	htop gpicview
+	yt-dlp minizip gnome-themes-extra
  	ffmpegthumbnailer tmux
+	# browser
+	zen-browser-bin firefox librewolf
 )
 
 # If you want to install AUR packages, specify them in this variable
-AUR_PACKAGES=(faugus-launcher-git)
+AUR_PACKAGES=()
 
 # ALHP is a repository containing packages from the official Arch Linux
 # repos recompiled with -O3, LTO and optimizations for modern CPUs for
@@ -66,40 +61,17 @@ AUR_PACKAGES=(faugus-launcher-git)
 # Arch Linux repos will be replaced with their optimized versions from ALHP
 #
 # Set this variable to any value if you want to enable this repository
-ENABLE_ALHP_REPO=
+ENABLE_ALHP_REPO=1
 
 # Feature levels for ALHP. Available feature levels are 2 and 3
 # For level 2 you need a CPU with SSE4.2 instructions
 # For level 3 you need a CPU with AVX2 instructions
-ALHP_FEATURE_LEVEL=2
+ALHP_FEATURE_LEVEL=3
 
 # Locales to configure in the image
 LOCALES=(
-	'ar_EG.UTF-8 UTF-8'
 	'en_US.UTF-8 UTF-8'
-	'en_GB.UTF-8 UTF-8'
-	'en_CA.UTF-8 UTF-8'
-	'en_SG.UTF-8 UTF-8'
-	'es_MX.UTF-8 UTF-8'
-	'zh_CN.UTF-8 UTF-8'
-	'fr_FR.UTF-8 UTF-8'
-	'ru_RU.UTF-8 UTF-8'
-	'ru_UA.UTF-8 UTF-8'
-	'es_ES.UTF-8 UTF-8'
 	'de_DE.UTF-8 UTF-8'
-	'pt_BR.UTF-8 UTF-8'
-	'it_IT.UTF-8 UTF-8'
-	'id_ID.UTF-8 UTF-8'
-	'ja_JP.UTF-8 UTF-8'
-	'bg_BG.UTF-8 UTF-8'
-	'pl_PL.UTF-8 UTF-8'
-	'da_DK.UTF-8 UTF-8'
-	'ko_KR.UTF-8 UTF-8'
-	'tr_TR.UTF-8 UTF-8'
-	'hu_HU.UTF-8 UTF-8'
-	'cs_CZ.UTF-8 UTF-8'
-	'bn_IN UTF-8'
-	'hi_IN UTF-8'
 )
 
 # Content of pacman mirrorrlist file before reflector is installed and used to fetch new one
