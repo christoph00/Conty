@@ -193,9 +193,7 @@ fi
 cp "${bootstrap}/etc/pacman.conf" "${bootstrap}/etc/pacman.conf.bak"
 
 cat > "${bootstrap}/etc/pacman.conf" <<EOF
-#
-# Pacman global config
-#
+[options]
 Architecture = x86_64 x86_64_v${CACHYOS_CPU_LEVEL}
 
 # Include Repo-Dateien (Reihenfolge definiert Priorität)
