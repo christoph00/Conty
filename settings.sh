@@ -45,7 +45,7 @@ PACKAGES=(
 	ttf-dejavu ttf-liberation ttf-opensans  mpv nemo
 	gpicview
 	yt-dlp minizip gnome-themes-extra
- 	ffmpegthumbnailer tmux
+ 	ffmpegthumbnailer tmux xdg-desktop-portal-wlr xdg-desktop-portal-gtk
 	# browser
 	firefox-pure chromium
 	# graphics
