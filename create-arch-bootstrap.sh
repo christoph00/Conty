@@ -217,6 +217,9 @@ awk '/^\[extra\]/,EOF' "${bootstrap}"/etc/pacman.conf.bak >> "${bootstrap}"/etc/
 # Do not install unneeded files (man pages and Nvidia firmwares)
 sed -i 's/#NoExtract   =/NoExtract   = usr\/lib\/firmware\/nvidia\/\* usr\/share\/man\/\*/' "${bootstrap}"/etc/pacman.conf
 
+sed -i '/^Architecture/ d' "${bootstrap}/etc/pacman.conf"
+echo "Architecture = x86_64 x86_64_v3" >> "${bootstrap}/etc/pacman.conf"
+
 run_in_chroot pacman -Sy archlinux-keyring --noconfirm
 run_in_chroot pacman -Su --noconfirm
 
