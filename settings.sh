@@ -42,16 +42,16 @@ PACKAGES=(
 	python-protobuf steam steam-native-runtime 
 	faugus-launcher protonplus umu-launcher openmw openttd proton-cachyos-slr
 	# extra
-	ttf-dejavu ttf-liberation ttf-opensans  mpv nemo
+	ttf-dejavu ttf-liberation ttf-opensans 
 	gpicview
-	yt-dlp minizip gnome-themes-extra
+	minizip gnome-themes-extra
  	ffmpegthumbnailer tmux xdg-desktop-portal-wlr xdg-desktop-portal-gtk
 	# browser
-	firefox-pure chromium
+	#firefox-pure chromium
 	# graphics
-	gimp inkscape
+	#gimp inkscape
 	# dev
-	code zed 
+	#code zed 
 
 )
 
