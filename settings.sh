@@ -56,7 +56,7 @@ PACKAGES=(
 )
 
 # If you want to install AUR packages, specify them in this variable
-AUR_PACKAGES=()
+AUR_PACKAGES=(bottles protontricks)
 
 # CachyOS repositories provide performance-optimized packages.
 # You can specify the CPU microarchitecture level to use the corresponding
