@@ -51,7 +51,9 @@ PACKAGES=(
 	# graphics
 	#gimp inkscape
 	# dev
-	#code zed 
+	#code zed
+	sway
+	sunshine
 
 )
 
