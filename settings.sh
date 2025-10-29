@@ -39,7 +39,7 @@ PACKAGES=(
 	openssl-1.1 lib32-openssl-1.1 libnm lib32-libnm
 	cabextract wget gamemode lib32-gamemode mangohud lib32-mangohud
 	# gaming
-	python-protobuf steam steam-native-runtime 
+	python-protobuf steam 
 	faugus-launcher protonplus umu-launcher openmw openttd proton-cachyos-slr
 	# extra
 	ttf-dejavu ttf-liberation ttf-opensans 
